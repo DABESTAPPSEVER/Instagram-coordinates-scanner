@@ -1,12 +1,18 @@
 [
 	'mechanize',
 	'json',
+	'sequel',
 	'pp'
 ].each{|g|
 	require g
 }
 
-require_relative 'helpers/methods.rb'
+[
+	'helpers/methods',
+	'models/init'
+].each{|rb|
+	require_relative rb+'.rb'
+}
 
 # SET UP AGENT
 p "SETTING UP AGENT"
@@ -38,9 +44,10 @@ places.each{|place|
 		postsHash['data'].each{|post|
 			pp post
 
-			attribution = post['attribution'] # App connected to IG in this post.
+			postID = post['id'].split('_')[0]
+			# attribution = post['attribution'] # App connected to IG in this post.
 			tagArray = post['tags']
-			type = post['type']
+			# type = post['type']
 			
 			locationHash = post['location']
 			postLat = locationHash['latitude']
@@ -60,9 +67,10 @@ places.each{|place|
 			userID = userInfoHash['id']
 
 			pp [
-				attribution,
+				postID,
+				# attribution,
 				tagArray,
-				type,
+				# type,
 				postLat,
 				postLon,
 				postLocationName,
