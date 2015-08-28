@@ -8,8 +8,8 @@
 }
 
 [
-	'helpers/methods'
-	# 'models/init'
+	'helpers/methods',
+	'models/init'
 ].each{|rb|
 	require_relative rb+'.rb'
 }
@@ -19,20 +19,19 @@ p "SETTING UP AGENT"
 agent = Mechanize.new
 agent.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE # Get around site's SSL problems
 
-# places.each{|place|
-# 	name = place['name']
-# 	coordinates = place['coordinates']
-	# lat = coordinate[0]
-	# lng = coordinate[1]
-	# accessToken = ARGV[0]
-	name = 'El Cid Bar and Grill'
-	lat = 26.689270
-	lng = -80.054208
-	accessToken = '327977318.5b9e1e6.cdc0b25c74ea4c0cbce5fecc37ea6188'
+p "GETTING ALL PLACES"
+GPlace.all.each{|place|
+	p place 
+	name = place.Name
+	lat = place.Latitude
+	lng = place.Longitude
+	accessToken = ENV['IG_ACCESS_TOKEN']
 	fetchLocationIDsURL = 'https://api.instagram.com/v1/locations/search?lat='+lat.to_s+'&lng='+lng.to_s+'&access_token='+accessToken
 	fetchLocationIDsJSON = agent.get(fetchLocationIDsURL).body
 	fetchLocationIDsHash = JSON.parse(fetchLocationIDsJSON)
 
+	# puts fetchLocationIDsHash
+	
 	fetchLocationIDsHash['data'].each{|locationInfoHash|
 		pp locationInfoHash,'==='
 
@@ -46,7 +45,7 @@ agent.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE # Get around site's SSL
 		postsJSON = agent.get(fetchPostsURL).body
 		postsHash = JSON.parse(postsJSON)
 		postsHash['data'].each{|post|
-			pp post
+			# pp post
 
 			postID = post['id'].split('_')[0]
 			# attribution = post['attribution'] # App connected to IG in this post.
@@ -70,26 +69,25 @@ agent.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE # Get around site's SSL
 			userProfilePic = userInfoHash['profile_picture']
 			userID = userInfoHash['id']
 
-			# p [
-			# 	postID,
-			# 	# attribution,
-			# 	tagArray,
-			# 	# type,
-			# 	postLat,
-			# 	postLon,
-			# 	postLocationName,
-			# 	postLocationID,
-			# 	createdTimeUnix,
-			# 	postLink,
-			# 	standardResImage,
-			# 	caption,
-			# 	username,
-			# 	userFullName,
-			# 	userProfilePic,
-			# 	userID
-			# ],
+			p [
+				postID,
+				# attribution,
+				tagArray,
+				# type,
+				postLat,
+				postLon,
+				postLocationName,
+				postLocationID,
+				createdTimeUnix,
+				postLink,
+				standardResImage,
+				caption,
+				username,
+				userFullName,
+				userProfilePic,
+				userID
+			],
 			'======='
 		}
 	}
-# }
-
+}
